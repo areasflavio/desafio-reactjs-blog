@@ -36,7 +36,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
   return (
     <>
       <Head>
-        <title> spacetraveling. | Home</title>
+        <title>Home | spacetraveling.</title>
       </Head>
 
       <main className={commonStyles.content}>
@@ -45,7 +45,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         <ul>
           {postsPagination.results.map(post => (
             <li key={post.uid} className={styles.post}>
-              <Link href={`/posts/${post.uid}`}>
+              <Link href={`/post/${post.uid}`}>
                 <a>
                   <strong>{post.data.title}</strong>
                 </a>
