@@ -1,3 +1,5 @@
+/* eslint-disable react/function-component-definition */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Prismic from '@prismicio/client';
@@ -43,13 +45,14 @@ export default function Post({ post }: PostProps): JSX.Element {
   }
 
   const numberOfWords = post.data.content.reduce((acc, content) => {
+    let word = acc;
     const wordsAtHeading = content.heading.split(' ');
 
     const wordsAtBody = RichText.asText(content.body).split(' ');
 
-    acc += wordsAtHeading.length + wordsAtBody.length;
+    word += wordsAtHeading.length + wordsAtBody.length;
 
-    return acc;
+    return word;
   }, 0);
 
   const readingTime = Math.ceil(numberOfWords / 200);
@@ -135,6 +138,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const response = await prismic.getByUID('posts', String(slug), {});
 
   const post = {
+    uid: response.uid,
     first_publication_date: response.first_publication_date,
     // first_publication_date: format(
     //   new Date(response?.first_publication_date),
@@ -145,6 +149,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     // ),
     data: {
       title: response.data.title,
+      subtitle: response.data.subtitle,
       banner: {
         url: response.data.banner.url,
       },
