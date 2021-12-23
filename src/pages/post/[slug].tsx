@@ -1,3 +1,5 @@
+/* eslint-disable testing-library/no-await-sync-query */
+/* eslint-disable react/no-danger */
 /* eslint-disable react/function-component-definition */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { GetStaticPaths, GetStaticProps } from 'next';
@@ -17,13 +19,15 @@ import commonStyles from '../../styles/common.module.scss';
 import styles from './post.module.scss';
 
 interface Post {
+  uid: string;
   first_publication_date: string | null;
   data: {
     title: string;
+    subtitle: string;
+    author: string;
     banner: {
       url: string;
     };
-    author: string;
     content: {
       heading: string;
       body: {
@@ -57,6 +61,14 @@ export default function Post({ post }: PostProps): JSX.Element {
 
   const readingTime = Math.ceil(numberOfWords / 200);
 
+  const formattedDate = format(
+    new Date(post.first_publication_date),
+    'dd MMM yyyy',
+    {
+      locale: ptBR,
+    }
+  );
+
   return (
     <>
       <Head>
@@ -74,9 +86,7 @@ export default function Post({ post }: PostProps): JSX.Element {
           <div className={styles.postInfo}>
             <time>
               <FiCalendar size={20} />
-              {format(new Date(post.first_publication_date), 'dd MMM yyyy', {
-                locale: ptBR,
-              })}
+              {formattedDate}
             </time>
 
             <small>
@@ -93,12 +103,10 @@ export default function Post({ post }: PostProps): JSX.Element {
           <div className={styles.postContent}>
             {post.data.content.map(({ heading, body }) => (
               <div key={heading}>
-                {heading && <h2>{heading}</h2>}
+                <h2>{heading}</h2>
 
                 <div
                   className={styles.postSection}
-                  // dangerouslySetInnerHTML={{ __html: String(body) }}
-                  // eslint-disable-next-line react/no-danger
                   dangerouslySetInnerHTML={{ __html: RichText.asHtml(body) }}
                 />
               </div>
@@ -134,19 +142,11 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slug } = params;
 
   const prismic = getPrismicClient();
-  // eslint-disable-next-line testing-library/no-await-sync-query
   const response = await prismic.getByUID('posts', String(slug), {});
 
   const post = {
     uid: response.uid,
     first_publication_date: response.first_publication_date,
-    // first_publication_date: format(
-    //   new Date(response?.first_publication_date),
-    //   'dd MMM yyyy',
-    //   {
-    //     locale: ptBR,
-    //   }
-    // ),
     data: {
       title: response.data.title,
       subtitle: response.data.subtitle,
@@ -154,11 +154,10 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
         url: response.data.banner.url,
       },
       author: response.data.author,
-      content: response.data.content,
-      // content: response.data.content.map(({ heading, body }) => ({
-      //   heading,
-      //   body: RichText.asHtml(body),
-      // })),
+      content: response.data.content.map(({ heading, body }) => ({
+        heading,
+        body: [...body],
+      })),
     },
   };
 
