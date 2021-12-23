@@ -89,15 +89,15 @@ export default function Post({ post }: PostProps): JSX.Element {
               {formattedDate}
             </time>
 
-            <small>
+            <div>
               <FiUser size={20} />
               {post.data.author}
-            </small>
+            </div>
 
-            <small>
+            <div>
               <FiClock size={20} />
-              {readingTime} min
-            </small>
+              {`${readingTime} min`}
+            </div>
           </div>
 
           <div className={styles.postContent}>
