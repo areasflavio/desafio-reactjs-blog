@@ -41,7 +41,7 @@ export default function Post({ post }: PostProps): JSX.Element {
   const { isFallback } = useRouter();
 
   if (isFallback) {
-    return <div>Carregando...</div>;
+    return <h1>Carregando...</h1>;
   }
 
   const numberOfWords = post.data.content.reduce((acc, content) => {
@@ -97,8 +97,8 @@ export default function Post({ post }: PostProps): JSX.Element {
 
                 <div
                   className={styles.postSection}
-                  // eslint-disable-next-line react/no-danger
                   // dangerouslySetInnerHTML={{ __html: String(body) }}
+                  // eslint-disable-next-line react/no-danger
                   dangerouslySetInnerHTML={{ __html: RichText.asHtml(body) }}
                 />
               </div>
@@ -112,10 +112,9 @@ export default function Post({ post }: PostProps): JSX.Element {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
-  const posts = await prismic.query(
-    [Prismic.predicates.at('document.type', 'posts')],
-    { pageSize: 3 }
-  );
+  const posts = await prismic.query([
+    Prismic.predicates.at('document.type', 'posts'),
+  ]);
 
   const paths = posts.results.map(post => {
     return {
@@ -135,6 +134,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const { slug } = params;
 
   const prismic = getPrismicClient();
+  // eslint-disable-next-line testing-library/no-await-sync-query
   const response = await prismic.getByUID('posts', String(slug), {});
 
   const post = {

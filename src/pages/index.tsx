@@ -36,39 +36,21 @@ interface HomeProps {
 }
 
 export default function Home({ postsPagination }: HomeProps): JSX.Element {
-  const [posts, setPosts] = useState(postsPagination.results);
-  const [nextPage, setNextPage] = useState(postsPagination.next_page);
+  const [pagination, setPagination] = useState<PostPagination>(postsPagination);
 
   useEffect(() => {
-    setPosts(postsPagination.results);
-    setNextPage(postsPagination.next_page);
-  }, [postsPagination.next_page, postsPagination.results]);
+    setPagination(postsPagination);
+  }, [postsPagination]);
 
   function handleLoadMorePosts() {
-    fetch(nextPage)
+    fetch(postsPagination.next_page)
       .then(res => res.json())
       .then(data => {
-        const newPosts = data.results.map(post => {
-          return {
-            uid: post.uid,
-            first_publication_date: post.first_publication_date,
-            // first_publication_date: format(
-            //   new Date(post.first_publication_date),
-            //   'dd MMM yyyy',
-            //   {
-            //     locale: ptBR,
-            //   }
-            // ),
-            data: {
-              title: post.data.title,
-              subtitle: post.data.subtitle,
-              author: post.data.author,
-            },
-          };
-        });
-
-        setPosts(prevPosts => [...prevPosts, ...newPosts]);
-        setNextPage(data.next_page);
+        const newPagination: PostPagination = {
+          next_page: data.next_page,
+          results: [...pagination.results, ...data.results],
+        };
+        setPagination(newPagination);
       });
   }
 
@@ -82,7 +64,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
         <Header />
 
         <ul>
-          {posts.map(post => (
+          {pagination.results.map(post => (
             <li key={post.uid} className={styles.post}>
               <Link href={`/post/${post.uid}`}>
                 <a>
@@ -112,7 +94,7 @@ export default function Home({ postsPagination }: HomeProps): JSX.Element {
           ))}
         </ul>
 
-        {nextPage && (
+        {pagination.next_page && (
           <button
             type="button"
             className={styles.nextPage}
