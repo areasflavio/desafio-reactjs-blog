@@ -42,24 +42,24 @@ interface PostProps {
 }
 
 export default function Post({ post }: PostProps): JSX.Element {
-  const { isFallback } = useRouter();
+  const router = useRouter();
 
-  if (isFallback) {
-    return <h1>Carregando...</h1>;
+  if (router.isFallback) {
+    return <p>Carregando...</p>;
   }
 
+  const avgWordPerMinute = 200;
+
   const numberOfWords = post.data.content.reduce((acc, content) => {
-    let word = acc;
-    const wordsAtHeading = content.heading.split(' ');
+    const word = acc;
+    const wordsAtHeading = content.heading.split(' ').length;
 
-    const wordsAtBody = RichText.asText(content.body).split(' ');
+    const wordsAtBody = RichText.asText(content.body).split(' ').length;
 
-    word += wordsAtHeading.length + wordsAtBody.length;
-
-    return word;
+    return word + wordsAtHeading + wordsAtBody;
   }, 0);
 
-  const readingTime = Math.ceil(numberOfWords / 200);
+  const readingTime = Math.ceil(numberOfWords / avgWordPerMinute);
 
   const formattedDate = format(
     new Date(post.first_publication_date),
@@ -144,25 +144,8 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {});
 
-  const post = {
-    uid: response.uid,
-    first_publication_date: response.first_publication_date,
-    data: {
-      title: response.data.title,
-      subtitle: response.data.subtitle,
-      banner: {
-        url: response.data.banner.url,
-      },
-      author: response.data.author,
-      content: response.data.content.map(({ heading, body }) => ({
-        heading,
-        body: [...body],
-      })),
-    },
-  };
-
   return {
-    props: { post },
+    props: { post: response },
     revalidate: 60 * 30, // 30 minutes
   };
 };

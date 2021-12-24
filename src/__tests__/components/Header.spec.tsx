@@ -1,6 +1,3 @@
-/**
- * @jest-environment jsdom
- */
 import { render, screen, fireEvent } from '@testing-library/react';
 import { RouterContext } from 'next/dist/shared/lib/router-context';
 
