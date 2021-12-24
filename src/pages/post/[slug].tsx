@@ -23,6 +23,7 @@ import styles from './post.module.scss';
 interface Post {
   uid: string;
   first_publication_date: string | null;
+  last_publication_date: string | null;
   data: {
     title: string;
     subtitle: string;
@@ -82,13 +83,27 @@ export default function Post({
 
   const readingTime = Math.ceil(numberOfWords / avgWordPerMinute);
 
-  const formattedDate = format(
+  const formattedPublicationDate = format(
     new Date(post.first_publication_date),
     'dd MMM yyyy',
     {
       locale: ptBR,
     }
   );
+
+  const isPostEdited =
+    post.first_publication_date !== post.last_publication_date;
+
+  let formattedEditDate;
+  if (isPostEdited) {
+    formattedEditDate = format(
+      new Date(post.last_publication_date),
+      "'* editado em' dd MMM yyyy', às' H':'m",
+      {
+        locale: ptBR,
+      }
+    );
+  }
 
   return (
     <>
@@ -107,7 +122,7 @@ export default function Post({
           <div className={styles.postInfo}>
             <time>
               <FiCalendar size={20} />
-              {formattedDate}
+              {formattedPublicationDate}
             </time>
 
             <div>
@@ -120,6 +135,8 @@ export default function Post({
               {`${readingTime} min`}
             </div>
           </div>
+
+          {isPostEdited && <span>{formattedEditDate}</span>}
 
           <div className={styles.postContent}>
             {post.data.content.map(({ heading, body }) => (
@@ -136,21 +153,25 @@ export default function Post({
         </article>
 
         <section className={`${styles.navigation} ${commonStyles.content}`}>
-          {navigation?.prevPost.length > 0 && (
+          {navigation?.prevPost.length > 0 ? (
             <div>
               <h3>{navigation.prevPost[0].data.title}</h3>
               <Link href={`/post/${navigation.prevPost[0].uid}`}>
                 <a>Post anterior</a>
               </Link>
             </div>
+          ) : (
+            <div />
           )}
-          {navigation?.nextPost.length > 0 && (
+          {navigation?.nextPost.length > 0 ? (
             <div>
               <h3>{navigation.nextPost[0].data.title}</h3>
               <Link href={`/post/${navigation.nextPost[0].uid}`}>
                 <a>Próximo post</a>
               </Link>
             </div>
+          ) : (
+            <div />
           )}
         </section>
 
