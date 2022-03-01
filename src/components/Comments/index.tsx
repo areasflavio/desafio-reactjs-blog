@@ -11,7 +11,7 @@ const Comments: React.FC = () => {
         scriptElem.src = 'https://utteranc.es/client.js';
         scriptElem.async = true;
         scriptElem.crossOrigin = 'anonymous';
-        scriptElem.setAttribute('repo', 'areasflavio/desafio-reactjs-blog');
+        scriptElem.setAttribute('repo', 'areasflavio/reactjs-blog');
         scriptElem.setAttribute('issue-term', 'pathname');
         scriptElem.setAttribute('label', 'blog-comment');
         scriptElem.setAttribute('theme', 'dark-blue');

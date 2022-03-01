@@ -42,7 +42,6 @@ export default function Home({
 
   useEffect(() => {
     setPagination(postsPagination);
-    console.log(postsPagination);
   }, [postsPagination]);
 
   function handleLoadMorePosts() {
