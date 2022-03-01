@@ -1,7 +1,3 @@
-/* eslint-disable testing-library/no-await-sync-query */
-/* eslint-disable react/no-danger */
-/* eslint-disable react/function-component-definition */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import url from 'url';
 
 export default async function exit(req, res) {

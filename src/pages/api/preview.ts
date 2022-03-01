@@ -1,6 +1,4 @@
-/* eslint-disable consistent-return */
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Document } from '@prismicio/client/types/documents';
+import { Document } from '@prismicio/client/types/documents'; // import from wherever this is set
 import { getPrismicClient } from '../../services/prismic'; // import from wherever this is set
 
 function linkResolver(doc: Document): string {
@@ -10,7 +8,7 @@ function linkResolver(doc: Document): string {
   return '/';
 }
 
-export default async (req, res) => {
+export default async (req: any, res: any) => {
   const { token: ref, documentId } = req.query;
   const redirectUrl = await getPrismicClient(req)
     .getPreviewResolver(ref, documentId)
