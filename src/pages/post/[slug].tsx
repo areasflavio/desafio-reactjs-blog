@@ -214,7 +214,7 @@ export const getStaticProps: GetStaticProps = async ({
 
   const prismic = getPrismicClient();
   const response = await prismic.getByUID('posts', String(slug), {
-    ref: previewData?.ref ?? null,
+    ref: (previewData as any)?.ref || null,
   });
 
   const prevPost = await prismic.query(
